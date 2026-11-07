@@ -4,9 +4,7 @@ import re
 
 from llm.tokenizer.interface import Token, TokenId
 from llm.tokenizer.simpleTokenizer import SimpleTokenizer
-
-UNK = "<UNK>"
-DOCEND = "<DOCEND>"
+from llm.tokenizer.tokens import DOCEND, UNK
 
 
 class SimpleTokenizerV2(SimpleTokenizer):
