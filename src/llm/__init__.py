@@ -2,6 +2,6 @@
 
 __version__ = "0.1.0"
 
-from llm.data import Data, DataFile
+from llm.data.data import Data, DataFile
 
 __all__ = ["Data", "DataFile", "__version__"]
