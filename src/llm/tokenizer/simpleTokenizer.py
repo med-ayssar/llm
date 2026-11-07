@@ -15,17 +15,22 @@ class SimpleTokenizer(Tokenizer):
 
     @model_validator(mode="after")
     def index_vocabulary(self) -> Self:
-        tokens = self.vocab.tokens()
+        tokens = list(dict.fromkeys(self.spliter.split(self.vocab.text)))
+        if not tokens:
+            raise ValueError("Vocabulary text does not contain any tokens")
         self._token_to_id = {token: index for index, token in enumerate(tokens)}
         self._id_to_token = {index: token for token, index in self._token_to_id.items()}
         return self
 
-    def encode(self, token: str) -> int:
-        parsed = Token(value=token)
-        try:
-            return self._token_to_id[parsed.value]
-        except KeyError:
-            raise KeyError(f"Unknown token: {parsed.value}") from None
+    def encode(self, text: str) -> list[int]:
+        ids: list[int] = []
+        for token in self.spliter.split(text):
+            parsed = Token(value=token)
+            try:
+                ids.append(self._token_to_id[parsed.value])
+            except KeyError:
+                raise KeyError(f"Unknown token: {parsed.value}") from None
+        return ids
 
     def decode(self, token_id: int) -> str:
         parsed = TokenId(id=token_id)

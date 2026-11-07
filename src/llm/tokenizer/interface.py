@@ -4,25 +4,20 @@ from abc import ABC, abstractmethod
 
 from pydantic import BaseModel, Field, field_validator
 
+from llm.tokenizer.spliter import Spliter
+
 
 class PlainTextVocab(BaseModel):
-    """Vocabulary written as plain text. Tokens are separated by whitespace."""
+    """Vocabulary written as plain text. A ``Spliter`` decides where tokens end."""
 
     text: str
 
     @field_validator("text")
     @classmethod
-    def require_tokens(cls, value: str) -> str:
-        if not value.split():
-            raise ValueError("Vocabulary text does not contain any tokens")
+    def require_text(cls, value: str) -> str:
+        if not value.strip():
+            raise ValueError("Vocabulary text is empty")
         return value
-
-    def tokens(self) -> list[str]:
-        """Unique tokens in the order they first appear."""
-        seen: dict[str, None] = {}
-        for token in self.text.split():
-            seen.setdefault(token, None)
-        return list(seen)
 
 
 class Token(BaseModel):
@@ -40,10 +35,16 @@ class TokenId(BaseModel):
 class Tokenizer(BaseModel, ABC):
     """Interface for a tokenizer backed by a plain-text vocabulary.
 
-    ``encode`` returns the id of one token. ``decode`` returns the token for one id.
+    ``vocab`` is the plain text. ``spliter`` splits that text and the text passed
+    to ``encode``. ``encode`` returns one id per token. ``decode`` returns the
+    token for one id.
     """
 
     vocab: PlainTextVocab
+    spliter: Spliter
+
+    def __init__(self, vocab: PlainTextVocab | str, spliter: Spliter, **data: object) -> None:
+        super().__init__(vocab=vocab, spliter=spliter, **data)
 
     @field_validator("vocab", mode="before")
     @classmethod
@@ -53,8 +54,8 @@ class Tokenizer(BaseModel, ABC):
         return value
 
     @abstractmethod
-    def encode(self, token: str) -> int:
-        """Return the id of ``token``."""
+    def encode(self, text: str) -> list[int]:
+        """Split ``text`` and return the id of each token."""
 
     @abstractmethod
     def decode(self, token_id: int) -> str:
