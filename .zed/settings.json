@@ -1,0 +1,15 @@
+{
+  "jupyter": {
+    "kernel_selections": {
+      "python": "llm"
+    }
+  },
+  "terminal": {
+    "detect_venv": {
+      "on": {
+        "directories": [".venv"],
+        "activate_script": "default"
+      }
+    }
+  }
+}

@@ -1,0 +1,32 @@
+[
+  {
+    "label": "uv: Jupyter Lab",
+    "command": "uv",
+    "args": ["run", "jupyter", "lab"],
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "use_new_terminal": true,
+    "reveal": "always"
+  },
+  {
+    "label": "uv: register Jupyter kernel",
+    "command": "uv",
+    "args": [
+      "run",
+      "python",
+      "-m",
+      "ipykernel",
+      "install",
+      "--user",
+      "--name",
+      "llm",
+      "--display-name",
+      "Python (llm)",
+      "--env",
+      "VIRTUAL_ENV",
+      "$ZED_WORKTREE_ROOT/.venv"
+    ],
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "use_new_terminal": true,
+    "reveal": "always"
+  }
+]
