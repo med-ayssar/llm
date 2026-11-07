@@ -36,8 +36,8 @@ class Tokenizer(BaseModel, ABC):
     """Interface for a tokenizer backed by a plain-text vocabulary.
 
     ``vocab`` is the plain text. ``spliter`` splits that text and the text passed
-    to ``encode``. ``encode`` returns one id per token. ``decode`` returns the
-    token for one id.
+    to ``encode``. ``encode`` returns one id per token. ``decode`` accepts one
+    id or a list of ids and joins the tokens with spaces.
     """
 
     vocab: PlainTextVocab
@@ -58,5 +58,8 @@ class Tokenizer(BaseModel, ABC):
         """Split ``text`` and return the id of each token."""
 
     @abstractmethod
-    def decode(self, token_id: int) -> str:
-        """Return the token stored at ``token_id``."""
+    def decode(self, token_ids: int | list[int]) -> str:
+        """Return the tokens for one id or a list of ids, joined with spaces.
+
+        Spaces before ``,.?!"()'`` are removed.
+        """
